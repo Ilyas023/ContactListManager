@@ -18,8 +18,8 @@ public class UpdateContactController : Controller
     }
 
     [HttpPut("update-contact-by-id/{id}")]
-    public async Task<ActionResult<ContactIsFinded>> UpdateContactById(int id, Contact contactUpd)
+    public async Task<ActionResult<ContactIsFinded>> UpdateContactByIdAsync(int id, Contact contactUpd)
     {
-        return await _contactListManagerService.UpdateContactById(id, contactUpd);
+        return await _contactListManagerService.UpdateContactByIdAsync(id, contactUpd);
     }
 }

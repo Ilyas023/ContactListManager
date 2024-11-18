@@ -19,15 +19,16 @@ public class ReadContactController : Controller
     }
 
     [HttpGet("get-all-contacts")]
-    public async Task<ActionResult<IEnumerable<Contact>>> GetAllContacts(int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<ContactApiResponse>> GetAllContacts(int pageIndex = 1, int pageSize = 10)
     {
-        var contacts = await _contactListManagerService.GetAllContactsAsync(pageNumber, pageSize);
-        return Ok(contacts);
+        var contacts = await _contactListManagerService.GetAllContactsAsync(pageIndex, pageSize);
+        return new ContactApiResponse(true, contacts);
     }
 
     [HttpGet("get-contact-by-id/{id}")]
-    public async Task<ActionResult<ContactIsFinded>> GetContactById(int id)
+    public async Task<ActionResult<ContactApiResponse>> GetContactById(int id)
     {
-        return await _contactListManagerService.GetContactByIdAsync(id);
+        var contact = await _contactListManagerService.GetContactByIdAsync(id);
+        return new ContactApiResponse(true, contact);
     }
 }

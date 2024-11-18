@@ -20,19 +20,15 @@ public class CreateContactsController : Controller
     }
 
     [HttpPost("post-contact")]
-    public async Task<ActionResult<Contact>> PostContact(Contact contact)
+    public async Task<ActionResult<ContactApiResponse>> PostContact(Contact contact)
     {
-        _logger.LogInformation("Started create");
-
         await _contactListManagerService.CreateContactAsync(contact);
-
-        _logger.LogInformation("Contact created succesfull, {contact.Name} added to contact list.", contact.Name); 
 
         return CreatedAtAction(
             nameof(ReadContactController.GetAllContacts), 
             "ReadContact", 
-            new { id = contact.Id }, 
-            contact
+            new { id = contact.Id },
+            new ContactApiResponse(true, contact)
         );
     }
 }
