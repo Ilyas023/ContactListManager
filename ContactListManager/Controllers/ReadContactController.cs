@@ -19,9 +19,10 @@ public class ReadContactController : Controller
     }
 
     [HttpGet("get-all-contacts")]
-    public async Task<ActionResult<IEnumerable<Contact>>> GetAllContacts()
+    public async Task<ActionResult<IEnumerable<Contact>>> GetAllContacts(int pageNumber = 1, int pageSize = 10)
     {
-        return await _contactListManagerService.GetAllContactsAsync();
+        var contacts = await _contactListManagerService.GetAllContactsAsync(pageNumber, pageSize);
+        return Ok(contacts);
     }
 
     [HttpGet("get-contact-by-id/{id}")]

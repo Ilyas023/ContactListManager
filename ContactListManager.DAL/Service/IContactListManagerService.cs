@@ -12,7 +12,7 @@ public interface IContactListManagerService
 {
     public Task CreateContactAsync(Contact contact);
     public Task<ContactIsFinded> GetContactByIdAsync(int id);
-    public Task<List<Contact>> GetAllContactsAsync();
+    public Task<List<Contact>> GetAllContactsAsync(int pageNumber, int pageSize);
     public Task<ContactIsFinded> UpdateContactById(int id, Contact contactUpd);
     public Task<ContactIsFinded> DeleteContactByIdAsync(int id);
 }

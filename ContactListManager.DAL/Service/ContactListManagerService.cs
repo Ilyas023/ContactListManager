@@ -29,30 +29,30 @@ public class ContactListManagerService : IContactListManagerService
             throw new Exception(ex.Message);
         }
     }
-
     public async Task<ContactIsFinded> DeleteContactByIdAsync(int id)
     {
         try
         {
             var contact = await _context.Contacts.FindAsync(id);
 
-            ContactIsFinded contactIsFinded = new ContactIsFinded
+            if (contact == null)
             {
-                Contact = contact,
-                IsFinded = contact != null
-            };
-
-            if (contactIsFinded.IsFinded == false)
-            {
-                contactIsFinded.Message = "Contact dont finded";
-                return contactIsFinded;
+                return new ContactIsFinded
+                {
+                    IsFinded = false,
+                    Message = "Contact not found"
+                };
             }
 
             _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
 
-            contactIsFinded.Message = "Contact deleted successfully";
-            return contactIsFinded;
+            return new ContactIsFinded
+            {
+                Contact = contact,
+                IsFinded = true,
+                Message = "Contact deleted successfully"
+            };
         }
         catch (Exception ex)
         {
@@ -61,9 +61,12 @@ public class ContactListManagerService : IContactListManagerService
         }
     }
 
-    public async Task<List<Contact>> GetAllContactsAsync()
+    public async Task<List<Contact>> GetAllContactsAsync(int pageNumber, int pageSize)
     {
-        return await _context.Contacts.ToListAsync();
+        return await _context.Contacts
+                             .Skip((pageNumber - 1) * pageSize)
+                             .Take(pageSize)
+                             .ToListAsync();
     }
 
     public async Task<ContactIsFinded> GetContactByIdAsync(int id)
@@ -88,32 +91,25 @@ public class ContactListManagerService : IContactListManagerService
     public async Task<ContactIsFinded> UpdateContactById(int id, Contact contactUpd)
     {
         var contactFromContext = await _context.Contacts.FindAsync(id);
-
-        ContactIsFinded contactIsFinded = new ContactIsFinded
+        if (contactFromContext == null)
         {
-            Contact = contactFromContext,
-            IsFinded = contactFromContext != null,
-        };
-
-        if (contactIsFinded.IsFinded == false && contactFromContext == null)
-        {
-            contactIsFinded.Message = "Contact dont finded";
-            return contactIsFinded;
+            return new ContactIsFinded
+            {
+                IsFinded = false,
+                Message = "Contact not found"
+            };
         }
 
         contactFromContext.Name = contactUpd.Name;
         contactFromContext.Email = contactUpd.Email;
         contactFromContext.PhoneNumber = contactUpd.PhoneNumber;
-        
-        await _context.SaveChangesAsync();
 
-        contactIsFinded = new ContactIsFinded
+        await _context.SaveChangesAsync();
+        return new ContactIsFinded
         {
             Contact = contactFromContext,
             IsFinded = true,
             Message = "Contact updated successfully"
         };
-
-        return contactIsFinded;
     }
 }
